@@ -1,0 +1,26 @@
+import pymysql
+
+conn = pymysql.connect(host='172.16.40.125', port=3306, user='user_guizhou', passwd='fasfsfTYG54rfGTHY',
+    db='db_guizhou',charset='utf8')
+cur = conn.cursor()
+
+
+#自己修改uid 值
+cur.execute("SELECT uid,lat,lng,description2,count(*)from dwell_address where uid =460000516063488 GROUP BY uid,lat,lng")
+out = []
+for r in cur.fetchall():
+    data =[]
+    data.append(r[1])
+    data.append(r[2])
+    data.append(r[4])
+    out.append(data)
+out.sort(key= lambda x:x[2],reverse = True)
+for x in out:
+    if x[2]>=2:
+        print(x[0]+" "+x[1]+" 次数："+str(x[2]))
+        
+        #修改uid
+        sql =" SELECT * from position where uid=\"460000516063488\" and lat="+ x[0]+"and lng="+x[1]
+        cur.execute(sql)
+        for r in cur.fetchall():
+            print(r[3])
